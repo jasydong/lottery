@@ -1,2 +1,2 @@
-# lottery-
+# lottery
 a lottery app
