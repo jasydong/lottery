@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lottery</title>
+  <script type="text/javascript" src="js/jquery-3.1.0.js"></script>
+  <script type="text/javascript" src="js/jquery.easing.js"></script>
+  <script type="text/javascript" src="js/jquery.easing.compatibility.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      var numbers = '';
+        for (var i=10; i<=400; i++) {
+            if (i<100) {
+                numbers += '<div class="num">0'+i+'</div>';
+            } else {
+                numbers += '<div class="num">'+i+'</div>';
+            }
+        }
+        $('#rolling_num').html(numbers);
+
+        var anim = null;
+        var stopFlag = true;
+
+        $(document).click(function(){
+            stopFlag = !stopFlag;
+            if (!stopFlag) {
+                anim = run();
+            }
+        });
+
+        var rolling = function(props) {
+            //var randNum = Math.floor(80*Math.random());
+            for (k in props) {
+                $('#rolling_num').css(k, props[k]);
+            }
+        }
+
+        function run() {
+            var speed = -0.1;
+            var step = 0.01;
+            var reduceSpeed = 0;
+            var upMaxSpeed = -0.8;
+            var lastSpeed = 0;
+            var lastOffsetY = 0;
+            var canStop = false;
+            var offsetY = lastOffsetY;
+            var p1 = 0;
+            var p2 = 0;
+            var t = setInterval(function(){
+                if (stopFlag) {
+                    p1 += p1<1 ? step:0;
+                    lastSpeed = speed;
+                    reduceSpeed = upMaxSpeed*$.easing['easeOutQuad'](p1);
+                    speed = upMaxSpeed-reduceSpeed;
+                    if (speed >= -0.03) {
+                        speed = lastSpeed;
+                        canStop = true;
+                        lastOffsetY = offsetY - (offsetY%80) - 80;
+                    }
+                }
+
+                if (!stopFlag && (speed<0 && speed>upMaxSpeed)) {
+                    p2 += p2<1 ? step:0;
+                    speed = upMaxSpeed*$.easing['easeInQuad'](p2);
+                }
+
+                offsetY += speed*30;
+                if (canStop) {
+                    if (lastOffsetY>offsetY) {
+                        lastOffsetY = Math.ceil(lastOffsetY);
+                        var props = {};
+                        props['marginTop'] = Math.ceil(lastOffsetY) + 'px';
+                        rolling(props);console.log(props);
+                        stop(anim);
+                    } else {
+                        rolling({'marginTop':offsetY+'px'});
+                    }
+                }
+
+                rolling({'marginTop':offsetY+'px'});
+            }, 10);
+
+            return t;
+        }
+
+        function stop(timer) {
+            clearTimeout(timer);
+        }
+    })
+  </script>
+  <style type="text/css" media="screen">
+  #rolling_box {
+    height:80px;
+    width:160px;
+    top:50%;
+    left:50%;
+    position:absolute;
+    overflow-y:hidden;
+    margin-top:-40px;
+    margin-left:-75px;
+    font-family: DS-Digital, 微软雅黑;
+    font-size: 64px;
+    font-weight: bold;
+  }
+  #rolling_num {
+    float:left;
+  }
+  #rolling_num .num {
+    height:80px;
+    width:154px;
+    color: #fff;
+    background:#000;
+    margin:0 auto;
+    line-height:80px;
+    padding-left:6px;
+    text-align:center;
+    letter-spacing:12px;
+  }
+  </style>
+</head>
+<body>
+  <div id="rolling_box">
+    <div id="rolling_num"></div>
+  </div>
+</body>
+</html>
