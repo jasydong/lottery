@@ -13,8 +13,11 @@
 		var numbers = '';
 		var offsetY = 0;
 		var stopFlag = true;
-        for (var i=10; i<=400; i++) {
-            if (i<100) {
+
+        for (var i=0; i<50; i++) {
+            if (i<10) {
+				numbers += '<div class="num">000'+i+'</div>';
+			} else if (i<100) {
                 numbers += '<div class="num">00'+i+'</div>';
             } else {
                 numbers += '<div class="num">0'+i+'</div>';
@@ -89,6 +92,11 @@
 					}
 				}
 
+				//无限循环
+				if (offsetY <= -pieceHight*50) {
+					offsetY = 0;
+				}
+
                 rolling({'marginTop':offsetY+'px'});
             }, 10);
 
@@ -101,17 +109,20 @@
     })
   </script>
   <style type="text/css" media="screen">
+  body {
+	background:#000;
+  }
   #rolling_box {
     height:80px;
-    width:200px;
+    width:240px;
     top:50%;
     left:50%;
     position:absolute;
     overflow-y:hidden;
-    margin-top:-400px;
-    margin-left:-100px;
-    font-family: 微软雅黑, DS-Digital;
-    font-size: 64px;
+    margin-top:-600px;
+    margin-left:-120px;
+    font-family: 微软雅黑;
+    font-size: 72px;
     font-weight: bold;
   }
   #rolling_num {
@@ -119,9 +130,8 @@
   }
   #rolling_num .num {
     height:80px;
-    width:200px;
-    color: #fff;
-    background:#000;
+    width:240px;
+    color: #2CC9DB;
     margin:0 auto;
     line-height:80px;
     /*padding-left:6px;*/
