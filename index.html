@@ -13,6 +13,67 @@
 		var numbers = '';
 		var offsetY = 0;
 		var stopFlag = true;
+		var keyPressed = {};
+
+		//初始化抽奖布局
+		var boxTotal = $('.rollingbox').length;
+		var rollingBoxes = $('.rollingbox');
+		if (boxTotal == 1) {
+			for (i=0; i<boxTotal; i++) {
+				if (i==0) {
+					$(rollingBoxes.get(i)).css('left', '50%');
+				}
+			}
+		} else if (boxTotal == 2) {
+			for (i=0; i<boxTotal; i++) {
+				if (i==0) {
+					$(rollingBoxes.get(i)).css('margin-left', '0').css('left', '20%');
+				} else if (i==1) {
+					$(rollingBoxes.get(i)).css('margin-left', '0').css('right', '20%');
+				}
+			}
+		} else if (boxTotal<=4) {
+			for (i=0; i<boxTotal; i++) {
+				if (i==0) {
+					$(rollingBoxes.get(i)).css('margin-left', '0').css('left', '20%').css('top', '30%');
+				} else if (i==1) {
+					$(rollingBoxes.get(i)).css('margin-left', '0').css('right', '20%').css('top', '30%');
+				} else if (i==2) {
+					$(rollingBoxes.get(i)).css('margin-left', '0').css('left', '20%').css('top', '70%');
+				} else if (i==3) {
+					$(rollingBoxes.get(i)).css('margin-left', '0').css('right', '20%').css('top', '70%');
+				}
+			}
+		} else if (boxTotal>=5) {
+			for (i=0; i<boxTotal; i++) {
+				if (i==0) {
+					$(rollingBoxes.get(i)).css('margin-left', '0').css('left', '20%').css('top', '20%');
+				} else if (i==1) {
+					$(rollingBoxes.get(i)).css('margin-left', '0').css('right', '20%').css('top', '20%');
+				} else if (i==2) {
+					$(rollingBoxes.get(i)).css('margin-left', '0').css('left', '20%').css('top', '50%');
+				} else if (i==3) {
+					$(rollingBoxes.get(i)).css('margin-left', '0').css('right', '20%').css('top', '50%');
+				} else if (i==4) {
+					$(rollingBoxes.get(i)).css('margin-left', '0').css('left', '20%').css('top', '80%');
+				} else if (i==5) {
+					$(rollingBoxes.get(i)).css('margin-left', '0').css('right', '20%').css('top', '80%');
+				}
+			}
+		}
+
+		//键盘控制
+		$(document).on('keyup', function (event) {
+			var keyCode = event.keyCode;
+			keyPressed[keyCode] = 1;
+			if (keyPressed[17] && keyPressed[18] && keyPressed[13]) {
+				stopFlag = !stopFlag;
+				if (!stopFlag) {
+					anim = run();
+				}
+				keyPressed = {};
+			}
+		});
 
         for (var i=0; i<50; i++) {
             if (i<10) {
@@ -24,22 +85,13 @@
             }
         }
 
-        $('#rolling_num').html(numbers);
-        //高空坠落效果
-        $('#rolling_box').animate({marginTop: '-40px'}, 1000, 'easeOutBounce');
-
-        $(document).click(function(){
-            stopFlag = !stopFlag;
-            if (!stopFlag) {
-                anim = run();
-            } else {
-				console.log('clicked!');
-			}
-        });
+        $('.rolling').html(numbers);
+        //坠落效果
+        $('.rollingbox').animate({marginTop: '-40px'}, 1000, 'easeOutBounce');
 
         var rolling = function(props) {
             for (k in props) {
-                $('#rolling_num').css(k, props[k]);
+                $('.rolling').css(k, props[k]);
             }
         }
 
@@ -112,11 +164,11 @@
   body {
 	background:#000;
   }
-  #rolling_box {
+  .rollingbox {
     height:80px;
     width:240px;
     top:50%;
-    left:50%;
+    /*left:50%;*/
     position:absolute;
     overflow-y:hidden;
     margin-top:-600px;
@@ -125,10 +177,10 @@
     font-size: 72px;
     font-weight: bold;
   }
-  #rolling_num {
+  .rolling {
     float:left;
   }
-  #rolling_num .num {
+  .rolling .num {
     height:80px;
     width:240px;
     color: #2CC9DB;
@@ -141,8 +193,23 @@
   </style>
 </head>
 <body>
-  <div id="rolling_box">
-    <div id="rolling_num"></div>
+  <div class="rollingbox">
+    <div class="rolling"></div>
   </div>
+  <div class="rollingbox">
+    <div class="rolling"></div>
+  </div>
+  <div class="rollingbox">
+    <div class="rolling"></div>
+  </div>
+  <div class="rollingbox">
+    <div class="rolling"></div>
+  </div>
+  <!--div class="rollingbox">
+    <div class="rolling"></div>
+  </div>
+  <div class="rollingbox">
+    <div class="rolling"></div>
+  </div-->
 </body>
 </html>
