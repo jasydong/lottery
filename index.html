@@ -181,14 +181,14 @@
             var t = setInterval(function(){
                 if (stopRunFlag) {
 					if (lastOffsetY2 == 0) {
-						lastOffsetY2 = offsetY;
-						if (lastOffsetY2 % -pieceHight != 0) {
-							lastOffsetY2 = lastOffsetY2 - (lastOffsetY2 % -pieceHight);
+						lastOffsetY2 = (offsetY+distance < -pieceHight*(maxOffsetNum-1)) ? 0:offsetY;
+						if (lastOffsetY2 % pieceHight != 0) {
+							lastOffsetY2 = lastOffsetY2 - (lastOffsetY2 % pieceHight);
 						}
 					}
 
 					p3 += p3<1 ? step:0;
-					offsetY = lastOffsetY2 + distance*$.easing['easeOutCubic'](p3);
+					offsetY = (lastOffsetY2 + distance)*$.easing['easeOutCubic'](p3);
 					if (p3>=1) {
 						stopRolling = true;
 					}
@@ -216,8 +216,8 @@
 				}
 
 				//无限循环
-				if (offsetY <= -pieceHight*maxOffsetNum) {
-					offsetY = 0;
+				if (offsetY < -pieceHight*(maxOffsetNum-1)) {
+					offsetY = offsetY % pieceHight;
 				}
 
                 rolling({'marginTop':offsetY+'px'});
