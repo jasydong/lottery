@@ -33,11 +33,13 @@
 			/*padding-left:6px;*/
 			text-align:center;
 			letter-spacing:6px;
+			background:#111;
 		}
 	</style>
 
 	<script type="text/javascript" src="js/jquery-3.1.0.js"></script>
 	<script type="text/javascript" src="js/jquery.easing.js"></script>
+	<script type="text/javascript" src="js/webstorage.js"></script>
 	<script type="text/javascript" src="js/jquery.easing.compatibility.js"></script>
 	<script type="text/javascript">
     $(function() {
@@ -48,13 +50,18 @@
 		var stopRunFlag = true;
 		var stopRolling = false;
 		var keyPressed = {};
-		var awardStaff = {};
+		var awardStaff = webStorage.get('lottery') || [];
 		var staffGroup = [];
 		var staffIdMap = {"152":"\u4e8e\u5f64","198":"\u6c64\u662f\u6625","218":"\u674e\u4f1f","225":"\u6885\u4eae\u4eae","334":"\u6613\u6d69","605":"\u7941\u821f","612":"\u5218\u4ed5\u5c27","757":"\u82a6\u5c11\u519b","762":"\u4e60\u838e\u838e","829":"\u4e07\u5174\u51ef","848":"\u65b9\u5411\u80dc","861":"\u53f6\u8fdc\u670b","889":"\u9648\u5bbe","938":"\u8d3a\u94ed","969":"\u8463\u6770","997":"\u53f6\u6708\u5fb7","1031":"\u5f6d\u5fd7\u6d69","1167":"\u535c\u654f","1318":"\u66fe\u796f","1348":"\u5510\u5609\u654f","1398":"\u6731\u5efa\u6210","1553":"\u8c37\u521a","1586":"\u5218\u5170","1589":"\u674e\u79c0\u9759","1594":"\u5f90\u6069","1619":"\u5468\u732e\u9526","1640":"\u7f57\u7a0b","1682":"\u8303\u96c4\u98ce","1708":"\u6c6a\u5b88\u5fe0","1776":"\u8881\u6ce2","1781":"\u5ed6\u5b87\u65fa","1852":"\u8d56\u4e9a\u4e39","1870":"\u4efb\u7ea2\u6ce2","1914":"\u84dd\u5e08\u521a","1917":"\u4f55\u8302","1922":"\u674e\u4e16\u52c7","1957":"\u718a\u5584\u826f","1959":"\u5f90\u68a6\u541b","1972":"\u4f59\u9e4f","2010":"\u7f57\u96c4","2021":"\u4efb\u707f","2023":"\u6797\u80b2\u5f6c","2024":"\u738b\u4f26\u5f3a","2025":"\u9093\u77f3\u51ac","2027":"\u90d1\u51ef","2028":"\u8521\u541b\u541b","2029":"\u65bd\u91d1\u79d1","2034":"\u5f20\u7115\u68ee","2036":"\u674e\u5c11\u9f99","2058":"\u4f55\u8f76\u534e","2059":"\u5f90\u514b\u7384","2063":"\u738b\u56fd\u5e86","2068":"\u8521\u6653\u658c","2074":"\u4faf\u6995\u751f","2083":"\u91d1\u767e\u9633","2086":"\u5f20\u5f3a","2098":"\u7f57\u9896","2110":"\u8bb8\u4e1c\u7115","2118":"\u4f55\u76ca\u660e","2127":"\u5468\u5174\u56e2","2142":"\u6768\u56fd\u94a6","2144":"\u8d75\u6052","2145":"\u4e18\u950b","2158":"\u5434\u5e05","2160":"\u6797\u6797\u52a0","2161":"\u5218\u5b8f\u5a01","2162":"\u738b\u96c4\u98de","2166":"\u738b\u745e","2219":"\u738b\u9510","2226":"\u8c2d\u5468\u52c7","2231":"\u9ec4\u4fca\u950b","2233":"\u6797\u51ef","2239":"\u5f20\u884d\u8fea","2240":"\u88f4\u51ef\u5f3a","2241":"\u53f6\u8302","2261":"\u4e54\u4e9a\u5947","2262":"\u5371\u660e\u6770","2271":"\u718a\u6d69","2283":"\u738b\u5f66\u94f6","2294":"\u6c64\u58ec\u7678","2302":"\u90b1\u51a0\u8f89","2303":"\u5218\u81ea\u8f89","2325":"\u5468\u7ee7\u4f1f","2332":"\u9ec4\u57fa\u8302","2333":"\u674e\u8fea","2347":"\u738b\u6b23","2353":"\u4e01\u5b87","2368":"\u5218\u51cc\u5b9d","2382":"\u5218\u4ed8\u9e3f","2394":"\u8881\u4f1f\u5cb8","2397":"\u8042\u534e\u5415","2398":"\u5468\u5168","2408":"\u9648\u5e86\u9e4f","2413":"\u4f55\u4e2d\u6743"};
 
 		//初始化抽奖数据
-		for (k in staffIdMap) {
-			staff.push(k);
+		function initData() {
+			staff = [];
+			for (k in staffIdMap) {
+				if ($.inArray(parseInt(k), awardStaff) == -1) {
+					staff.push(k);
+				}
+			}
 		}
 
 		//初始化抽奖布局
@@ -114,6 +121,7 @@
 					stopRolling = false;
 				}
 				if (!stopRunFlag) {
+					initData();
 					initLottery();
 					anim = run();
 				}
@@ -121,21 +129,19 @@
 			}
 		});
 
-		// shuffle
+		//Shuffle
 		function shuffle(array) {
 			for (var j, x, i = array.length; i; j = parseInt(Math.random() * i), x = array[--i], array[i] = array[j], array[j] = x);
 			return array;
 		}
 
 		//初始化
-		//initLottery();
-
 		function initLottery() {
 			for (var i=0; i<boxTotal; i++) {
 				staffGroup[i] = [];
 				$(rollingBoxes.get(i)).find('.rolling').html('');
 			}
-			staff = shuffle(staff);//console.log(staff);
+			staff = shuffle(staff);
 			for (var i=0; i<staff.length; i++) {
 				if (staff[i]<10) {
 					numbers = '<div class="num">000'+staff[i]+'</div>';
@@ -151,8 +157,6 @@
 				staffGroup[index].push(staff[i]);
 				$(rollingBoxes.get(index)).find('.rolling').append(numbers);
 			}
-
-			console.log(staffGroup);
 		}
 
         //坠落效果
@@ -226,8 +230,10 @@
 					//获奖
 					for (var i=0; i<boxTotal; i++) {
 						var marginTop = $(rollingBoxes.get(i)).find('.rolling').css('margin-top').replace("px","");
-						var staffIndex = parseInt(Math.floor(marginTop)/-pieceHight);console.log(marginTop);console.log(staffIndex);
-						var staffId = staffGroup[i][staffIndex];console.log(staffId);
+						var staffIndex = parseInt(Math.floor(marginTop)/-pieceHight);
+						var staffId = staffGroup[i][staffIndex];
+						awardStaff.push(parseInt(staffId));
+						webStorage.set('lottery', awardStaff);console.log(staffId);
 					}
 
 					stop(anim);
