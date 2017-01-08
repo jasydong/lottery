@@ -141,11 +141,13 @@
 						initRollingBox();
 						initLottery();
 						$('.rollingbox').css('margin-top', '-40px');
-						//$('.rollingbox').animate({marginTop: '-40px'}, 1000, 'easeOutBounce');
+						$('.rollingbox').animate({marginTop: '-40px'}, 1000, 'easeOutBounce');
 						setTimeout(function(){
+                            bgMusic.play();
 							anim = run();
 						}, 1000);
 					} else {
+                        bgMusic.play();
 						anim = run();
 					}
 				}
@@ -181,8 +183,10 @@
 				staffGroup[index].push(staff[i]);
 				$(rollingBoxes.get(index)).find('.rolling').append(numbers);
 			}
-			console.log(staffGroup);
 		}
+
+        //初始化背景音乐
+        var bgMusic = initBgMusic();
 
 		//初始化抽奖布局
 		initRolling(awardRoundNum[roundIndex]);
@@ -192,6 +196,22 @@
 		initData();
 		initLottery();
         $('.rollingbox').animate({marginTop: '-40px'}, 1000, 'easeOutBounce');
+        
+
+        function initBgMusic() {
+            var music = loadSoundFile('mp3/bg.mp3');
+            music.volume = 0;
+
+            return music;
+        }
+
+        function loadSoundFile(url) {
+            var audio = new Audio();
+            audio.src = url;
+            audio.loop = true;
+
+            return audio;   
+        }
 
         function run() {
 			var pieceHight = 80;
@@ -223,6 +243,7 @@
 					}
 
 					p3 += p3<1 ? step:0;
+                    bgMusic.volume -= bgMusic.volume>step ? step:0;
 					offsetY = (lastOffsetY2 + distance)*$.easing['easeOutCubic'](p3);
 					if (p3>=1) {
 						stopRolling = true;console.log('offsetY:'+offsetY);
@@ -231,7 +252,7 @@
 
 				if (!stopRunFlag) {
 					p1 += p1<1 ? step:0;
-
+                    bgMusic.volume += bgMusic.volume>1-step ? 0:step;
 					if (!highSpeedFlag) {
 						offsetY = lastOffsetY2 + distance*$.easing['easeInCubic'](p1);
 					}
@@ -268,6 +289,7 @@
 					}
 
 					roundIndex++;
+                    bgMusic.pause();
 					stop(anim);
 					anim = null;
 				}
