@@ -15,7 +15,7 @@
 			/*left:50%;*/
 			position:absolute;
 			overflow-y:hidden;
-			margin-top:-600px;
+			margin-top:-40px;
 			margin-left:-120px;
 			font-family: 微软雅黑;
 			font-size: 64px;
@@ -35,6 +35,11 @@
 			letter-spacing:6px;
 			background:#111;
 		}
+		.imagebox {
+			left: 5%;
+			margin-top:-600px;
+			position: absolute;
+		}
 	</style>
 
 	<script type="text/javascript" src="js/jquery-3.1.0.js"></script>
@@ -50,9 +55,10 @@
 		var stopRunFlag = true;
 		var stopRolling = false;
 		var keyPressed = {};
-		var roundIndex = 0;
-		var awardRoundNum = [6,6,4,2,1,1,1,1,1,1];
-		var awardStaff = webStorage.get('lottery') || [];
+		var roundIndex = webStorage.get('lottery_round_index') || 0;
+		var awardRoundNum = [6,6,6,5,5,5,1,1,1,1,1,1,1,1];
+		var imageList = ['100jd.png','100jd.png','100jd.png','keyboard.png','earphone.png','phone.png','iwatch.png','iphone7.png','hongbao.png','kiddle.png','toothbrush','durex.png','500jd.png','hufu.png'];
+		var awardStaff = webStorage.get('lottery_award_staff') || [];
 		var staffGroup = [];
 		var rollingBoxes = null;
 		var boxTotal = null;
@@ -60,7 +66,7 @@
 
 		//initLayout
 		function initRolling(num) {
-			var html = '';
+			var html = '<div class="imagebox" id="imagebox"><img src="images/'+imageList[roundIndex]+'"/></div>';
 			for (var i=0; i<num; i++) {
 				html += '<div class="rollingbox"><div class="rolling"></div></div>';
 			}
@@ -89,7 +95,7 @@
 			} else if (boxTotal == 2) {
 				for (i=0; i<boxTotal; i++) {
 					if (i==0) {
-						$(rollingBoxes.get(i)).css('margin-left', '0').css('left', '20%');
+						$(rollingBoxes.get(i)).css('margin-left', '0').css('left', '40%');
 					} else if (i==1) {
 						$(rollingBoxes.get(i)).css('margin-left', '0').css('right', '20%');
 					}
@@ -97,11 +103,11 @@
 			} else if (boxTotal<=4) {
 				for (i=0; i<boxTotal; i++) {
 					if (i==0) {
-						$(rollingBoxes.get(i)).css('margin-left', '0').css('left', '20%').css('top', '30%');
+						$(rollingBoxes.get(i)).css('margin-left', '0').css('left', '40%').css('top', '30%');
 					} else if (i==1) {
 						$(rollingBoxes.get(i)).css('margin-left', '0').css('right', '20%').css('top', '30%');
 					} else if (i==2) {
-						$(rollingBoxes.get(i)).css('margin-left', '0').css('left', '20%').css('top', '70%');
+						$(rollingBoxes.get(i)).css('margin-left', '0').css('left', '40%').css('top', '70%');
 					} else if (i==3) {
 						$(rollingBoxes.get(i)).css('margin-left', '0').css('right', '20%').css('top', '70%');
 					}
@@ -109,17 +115,17 @@
 			} else if (boxTotal>=5) {
 				for (i=0; i<boxTotal; i++) {
 					if (i==0) {
-						$(rollingBoxes.get(i)).css('margin-left', '0').css('left', '20%').css('top', '20%');
+						$(rollingBoxes.get(i)).css('margin-left', '0').css('left', '40%').css('top', '30%');
 					} else if (i==1) {
-						$(rollingBoxes.get(i)).css('margin-left', '0').css('right', '20%').css('top', '20%');
+						$(rollingBoxes.get(i)).css('margin-left', '0').css('right', '20%').css('top', '30%');
 					} else if (i==2) {
-						$(rollingBoxes.get(i)).css('margin-left', '0').css('left', '20%').css('top', '50%');
+						$(rollingBoxes.get(i)).css('margin-left', '0').css('left', '40%').css('top', '50%');
 					} else if (i==3) {
 						$(rollingBoxes.get(i)).css('margin-left', '0').css('right', '20%').css('top', '50%');
 					} else if (i==4) {
-						$(rollingBoxes.get(i)).css('margin-left', '0').css('left', '20%').css('top', '80%');
+						$(rollingBoxes.get(i)).css('margin-left', '0').css('left', '40%').css('top', '70%');
 					} else if (i==5) {
-						$(rollingBoxes.get(i)).css('margin-left', '0').css('right', '20%').css('top', '80%');
+						$(rollingBoxes.get(i)).css('margin-left', '0').css('right', '20%').css('top', '70%');
 					}
 				}
 			}
@@ -140,8 +146,9 @@
 						initRolling(awardRoundNum[roundIndex]);
 						initRollingBox();
 						initLottery();
-						$('.rollingbox').css('margin-top', '-40px');
-						$('.rollingbox').animate({marginTop: '-40px'}, 1000, 'easeOutBounce');
+						//$('.rollingbox').css('margin-top', '-40px');
+						//$('.rollingbox').animate({marginTop: '-40px'}, 1000, 'easeOutBounce');
+						$('.imagebox').animate({marginTop: '120px'}, 1000, 'easeOutBounce');
 						setTimeout(function(){
                             bgMusic.play();
 							anim = run();
@@ -196,6 +203,7 @@
 		initData();
 		initLottery();
         $('.rollingbox').animate({marginTop: '-40px'}, 1000, 'easeOutBounce');
+		$('.imagebox').animate({marginTop: '120px'}, 1000, 'easeOutBounce');
         
 
         function initBgMusic() {
@@ -246,7 +254,7 @@
                     bgMusic.volume -= bgMusic.volume>step ? step:0;
 					offsetY = (lastOffsetY2 + distance)*$.easing['easeOutCubic'](p3);
 					if (p3>=1) {
-						stopRolling = true;console.log('offsetY:'+offsetY);
+						stopRolling = true;
 					}
                 }
 
@@ -273,7 +281,7 @@
 
 				//无限循环
 				if (offsetY < -pieceHight*(maxOffsetNum-1)) {
-					offsetY = offsetY % pieceHight;
+					offsetY = offsetY % pieceHight;console.log(offsetY);
 				}
 
                 rolling({'marginTop':offsetY+'px'});
@@ -285,10 +293,10 @@
 						var staffIndex = parseInt(Math.floor(marginTop)/-pieceHight);
 						var staffId = staffGroup[i][staffIndex-1];
 						awardStaff.push(parseInt(staffId));
-						webStorage.set('lottery', awardStaff);console.log(staffId);
+						webStorage.set('lottery_award_staff', awardStaff);console.log(staffId);
 					}
 
-					roundIndex++;
+					webStorage.set('lottery_round_index', ++roundIndex);
                     bgMusic.pause();
 					stop(anim);
 					anim = null;
